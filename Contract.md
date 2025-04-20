@@ -40,6 +40,7 @@ We will check in at least once a week and try our best to have everyone attend t
 - Zoom (only if it's really inconvenient to meet in person)
 - GitHub
 - VS Code
+- Message
 
 ## Decision-Making
 
