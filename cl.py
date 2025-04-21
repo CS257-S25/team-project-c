@@ -1,3 +1,7 @@
+'''
+The eventual location for the command line interface (CLI) for the project.
+This will be the entry point for the project when run from the command line.
+'''
 import argparse
 from ProductionCode.processor import (
     get_sightings_by_shape,
@@ -6,6 +10,8 @@ from ProductionCode.processor import (
 )
 
 def main():
+    """Parse command-line arguments and display filtered UFO sightings."""
+
     parser = argparse.ArgumentParser(description="UFO Sightings CLI Tool")
     parser.add_argument('--shape', type=str, help='Filter sightings by UFO shape (e.g. "circle")')
     parser.add_argument('--year', type=int, help='Filter sightings by year, from 1941 to 2013')
