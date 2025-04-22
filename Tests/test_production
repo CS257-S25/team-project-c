@@ -1,0 +1,61 @@
+import unittest
+import sys
+from unittest.mock import patch, mock_open
+from io import StringIO
+from ProductionCode.production import load_data, display_results, filter_sightings_by_year, filter_by_shape, get_sightings_by_shape
+
+class TestMethods(unittest.TestCase):
+    def setUp(self):
+        self.sample_data = [{'datetime': '10/10/1949 20:30', 'city': 'san marcos', 'shape': 'cylinder'},
+                            {'datetime': '10/10/1949 21:00', 'city': 'lackland afb', 'shape': 'light'},
+                            {'datetime': '10/10/1956 21:00', 'city': 'edna', 'shape': 'cylinder'}]
+        self._stdout = sys.stdout 
+        self.held_output = StringIO()
+        sys.stdout = self.held_output
+
+    @patch("builtins.open", new_callable = mock_open, read_data = 'datetime,city\na,b\n')
+    def test_load_data(self, mock_file):
+        result = load_data("test_file.csv")
+        expected_result = [{'datetime': 'a', 'city': 'b'}]
+        self.assertEqual(result, expected_result)
+        mock_file.assert_called_with("test_file.csv", newline='', encoding='utf-8')
+        
+    def test_display_result(self):
+        display_results(self.sample_data)
+        output = self.held_output.getvalue()
+        self.assertIn('san marcos', output)
+        self.assertIn('lackland afb', output)
+        self.assertIn('edna', output)
+        self.assertEqual(output.count('{'), 3)
+
+    def test_filter_sightings_by_year(self):
+        result_1949 = filter_sightings_by_year(self.sample_data, 1949)
+        self.assertEqual(len(result_1949), 2)
+        cities_1949 = {entry['city'] for entry in result_1949}
+        expected_cities = {'san marcos', 'lackland afb'}
+        self.assertEqual(cities_1949, expected_cities)
+
+        result_1956 = filter_sightings_by_year(self.sample_data, 1956)
+        self.assertEqual(len(result_1956), 1)
+        self.assertEqual(result_1956[0]['city'], 'edna')
+
+        result_empty = filter_sightings_by_year(self.sample_data, 2000)
+        self.assertEqual(len(result_empty), 0)
+
+    def test_filter_by_shape(self):
+        result_cylinder = filter_by_shape(self.sample_data, "cylinder")
+        self.assertEqual(len(result_cylinder), 2)
+        shape_cylinder = {entry['city'] for entry in result_cylinder}
+        expected_shape = {'san marcos', 'edna'}
+        self.assertEqual(shape_cylinder, expected_shape)
+
+        result_light = filter_by_shape(self.sample_data, "light")
+        self.assertEqual(len(result_cylinder), 1)
+        self.assertEqual(result_light[0]['city'], 'lackland afb')
+
+        result_empty = filter_sightings_by_year(self.sample_data, "disk")
+        self.assertEqual(len(result_empty), 0)
+
+
+if __name__ == '__main__':
+    unittest.main()
