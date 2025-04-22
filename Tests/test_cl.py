@@ -1,4 +1,5 @@
 """Test for functions in both production codes and command line tool."""
+
 import unittest
 import sys
 from unittest.mock import patch, mock_open
@@ -8,11 +9,12 @@ from ProductionCode.processor import (
     filter_sightings_by_year, filter_by_shape,
     get_sightings_by_shape
 )
-import cl 
+import cl
+
 
 class TestProcessorMethods(unittest.TestCase):
-    """Unit tests for functions in ProductionCode."""
-    
+    """Unit tests for functions in ProductionCode and CLI."""
+
     def setUp(self):
         """Redirect stdout and prepare sample UFO data for testing."""
         self.sample_data = [
@@ -72,16 +74,16 @@ class TestProcessorMethods(unittest.TestCase):
         self.assertEqual(len(result_empty), 0)
 
     @patch("builtins.open", new_callable=mock_open, read_data=
-        "datetime,city,state,shape,duration,comments\n"
-        "10/10/1949 20:30,san marcos,tx,cylinder,5 mins,\"desc\"\n"
-        "10/10/1956 21:00,edna,tx,cylinder,5 mins,\"desc\"\n")
+           "datetime,city,state,shape,duration,comments\n"
+           "10/10/1949 20:30,san marcos,tx,cylinder,5 mins,\"desc\"\n"
+           "10/10/1956 21:00,edna,tx,cylinder,5 mins,\"desc\"\n")
     def test_get_sightings_by_shape(self, mock_file):
         """Test wrapper that loads data and filters by shape correctly."""
         result = get_sightings_by_shape("cylinder")
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]["shape"], "cylinder")
 
-def test_no_arguments(self):
+    def test_no_arguments(self):
         """Test that the command line tool handles no arguments correctly."""
         with patch('sys.stdout', new=StringIO()) as fake_out:
             with patch('sys.argv', ['cl.py']):
