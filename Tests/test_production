@@ -2,7 +2,7 @@ import unittest
 import sys
 from unittest.mock import patch, mock_open
 from io import StringIO
-from ProductionCode.production import load_data, display_results, filter_sightings_by_year, filter_by_shape, get_sightings_by_shape
+from ProductionCode.processor import load_data, display_results, filter_sightings_by_year, filter_by_shape, get_sightings_by_shape
 
 class TestMethods(unittest.TestCase):
     def setUp(self):
