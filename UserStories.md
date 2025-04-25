@@ -1,4 +1,4 @@
-# User Stories & Acceptance Criteria
+# User Stories and Acceptance Criteria
 
 ## 1
 
