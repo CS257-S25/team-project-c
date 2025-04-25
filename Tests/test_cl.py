@@ -125,6 +125,5 @@ class TestProcessorMethods(unittest.TestCase):
             output = fake_out.getvalue()
             self.assertIn("Please use existing arguments", output)
 
-
 if __name__ == '__main__':
     unittest.main()
