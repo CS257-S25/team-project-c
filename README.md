@@ -25,3 +25,7 @@ The dataset categories ufos into the following list and other unkown catagories.
 - sphere
 - triangle
 - teardrop
+
+## Flask App
+
+The app displays a webpage with either ufos sorted by shape with (/sightings/year/<int:year>) or sorted by year with (sightings/shape:/<string:shape>)
