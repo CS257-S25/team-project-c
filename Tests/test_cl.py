@@ -79,6 +79,7 @@ class TestProcessorMethods(unittest.TestCase):
            "10/10/1956 21:00,edna,tx,cylinder,5 mins,\"desc\"\n")
     def test_get_sightings_by_shape(self, mock_file):
         """Test wrapper that loads data and filters by shape correctly."""
+        _ = mock_file
         result = get_sightings_by_shape("cylinder")
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]["shape"], "cylinder")
