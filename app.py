@@ -49,9 +49,8 @@ def table_constructor(results):
     return table
 
 @app.errorhandler(404)
-def page_not_found(e):
+def page_not_found():
     """Custom 404 error page (e is unused but required by Flask)."""
-    del e  # explicitly discard unused variable
     return '''
         <h1>404 - Page Not Found</h1>
         <p>Oops, invalid URL! Please try using proper formatting:</p>
