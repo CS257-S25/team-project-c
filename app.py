@@ -1,6 +1,4 @@
-'''
-The Flask app interface for the UFO sightings project (HTML table version).
-'''
+'''The Flask app interface for the UFO sightings project (HTML table version).'''
 
 from flask import Flask
 from ProductionCode import processor
@@ -50,11 +48,11 @@ def table_constructor(results):
     return table
 
 @app.errorhandler(404)
-def page_not_found(e):
+def page_not_found():
     """Custom 404 error page."""
     return '''
         <h1>404 - Page Not Found</h1>
-        <p>Oops,Invaid URL! Please try using proper formatting:</p>
+        <p>Oops, Invalid URL! Please try using proper formatting:</p>
         <ul>
             <li><code>/sightings/year/&lt;year&gt;</code></li>
             <li><code>/sightings/shape/&lt;shape&gt;</code></li>
