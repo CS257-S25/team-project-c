@@ -62,7 +62,7 @@ jobs:
       with:
         test-name: Style check - app
         setup-command: python -m pip install --upgrade pip; pip install pylint
-        command: pylint --disable=import-error app.py
+        command: pylint --disable=import-error --score=y app.py
         timeout: 10
     - name: Autograding Reporter
       uses: classroom-resources/autograding-grading-reporter@v1
