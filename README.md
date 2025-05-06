@@ -2,13 +2,17 @@
 
 Users can filter ufo sightings by year and shape.
 
-## Year
+1. Filter by Year
 
 The dataset contains data from 1941 to 2013.
+Therefore, data input must be within this range.
+User statement: python3 cl.py -- year 1981
 
-## Shape
+2. Shape
 
 The dataset categories ufos into the following list and other unkown catagories.
+Therefore, data input must be witin these given catagories.
+User statement: python3 cl.py --shape circle
 
 - changing
 - cigar
@@ -26,7 +30,7 @@ The dataset categories ufos into the following list and other unkown catagories.
 - triangle
 - teardrop
 
-## Flask App
+# Flask App
 
 ### How to Run the Flask App1
 

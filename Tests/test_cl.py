@@ -60,6 +60,12 @@ class TestProcessorMethods(unittest.TestCase):
         result_empty = filter_sightings_by_year(self.sample_data, 2000)
         self.assertEqual(len(result_empty), 0)
 
+    def test_filter_by_year_with_bad_data(self):
+        """Test that filter_sightings_by_year skips malformed dates."""
+        bad_data = [{'datetime': 'bad_date', 'city': 'nowhere', 'shape': 'disk'}]
+        result = filter_sightings_by_year(bad_data, 2000)
+        self.assertEqual(result, [])
+
     def test_filter_by_shape(self):
         """Test filtering sightings by shape returns matching entries."""
         result_cylinder = filter_by_shape(self.sample_data, "cylinder")
@@ -79,7 +85,6 @@ class TestProcessorMethods(unittest.TestCase):
            "10/10/1956 21:00,edna,tx,cylinder,5 mins,\"desc\"\n")
     def test_get_sightings_by_shape(self, mock_file):
         """Test wrapper that loads data and filters by shape correctly."""
-        _ = mock_file
         result = get_sightings_by_shape("cylinder")
         self.assertEqual(len(result), 2)
         self.assertEqual(result[0]["shape"], "cylinder")
@@ -92,6 +97,33 @@ class TestProcessorMethods(unittest.TestCase):
             output = fake_out.getvalue()
             self.assertIn("Please use existing arguments to filter the data", output)
 
+    def test_cli_with_year_argument(self):
+        """Test CLI filters sightings by year argument."""
+        with patch('sys.argv', ['cl.py', '--year', '1949']), \
+             patch('sys.stdout', new=StringIO()) as fake_out, \
+             patch('ProductionCode.processor.load_data', return_value=self.sample_data):
+            cl.main()
+            output = fake_out.getvalue()
+            self.assertIn("san marcos", output)
+            self.assertIn("lackland afb", output)
+
+    def test_cli_with_shape_argument(self):
+        """Test CLI filters sightings by shape argument."""
+        with patch('sys.argv', ['cl.py', '--shape', 'cylinder']), \
+             patch('sys.stdout', new=StringIO()) as fake_out, \
+             patch('ProductionCode.processor.load_data', return_value=self.sample_data):
+            cl.main()
+            output = fake_out.getvalue()
+            self.assertIn("san marcos", output)
+            self.assertIn("edna", output)
+
+    def test_cli_with_invalid_argument(self):
+        """Test CLI prints usage info with invalid argument."""
+        with patch('sys.argv', ['cl.py', '--color', 'blue']), \
+             patch('sys.stdout', new=StringIO()) as fake_out:
+            cl.main()
+            output = fake_out.getvalue()
+            self.assertIn("Please use existing arguments", output)
 
 if __name__ == '__main__':
     unittest.main()
