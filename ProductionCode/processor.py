@@ -20,10 +20,13 @@ def filter_sightings_by_year(data,year):
     results = []
     for row in data:
         try:
-            row_year = int(row['datetime'].split('/')[2].split()[0])
-            if row_year == year:
-                results.append(row)
-        except (IndexError, ValueError):
+            # Check if 'datetime' key exists and handle potential errors during parsing
+            if 'datetime' in row and row['datetime']:
+                row_year = int(row['datetime'].split('/')[2].split()[0])
+                if row_year == year:
+                    results.append(row)
+        except (IndexError, ValueError, TypeError): # Added TypeError for robustness
+            # Skip rows with unexpected format or missing data
             continue
     return results
 
@@ -32,7 +35,8 @@ def filter_by_shape(data, shape):
     results = []
     shape = shape.strip().lower()
     for row in data:
-        row_shape = row['shape'].strip().lower()
+        # Check if 'shape' key exists before accessing
+        row_shape = row.get('shape', '').strip().lower() # Use .get() for safer access
         if row_shape == shape:
             results.append(row)
     return results

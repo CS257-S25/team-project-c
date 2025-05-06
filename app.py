@@ -49,7 +49,7 @@ def table_constructor(results):
     return table
 
 @app.errorhandler(404)
-def page_not_found():
+def page_not_found(error):
     """Custom 404 error page (e is unused but required by Flask)."""
     return '''
         <h1>404 - Page Not Found</h1>
