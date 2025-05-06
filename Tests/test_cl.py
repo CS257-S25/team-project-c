@@ -120,10 +120,12 @@ class TestProcessorMethods(unittest.TestCase):
     def test_cli_with_invalid_argument(self):
         """Test CLI prints usage info with invalid argument."""
         with patch('sys.argv', ['cl.py', '--color', 'blue']), \
-             patch('sys.stdout', new=StringIO()) as fake_out:
-            cl.main()
-            output = fake_out.getvalue()
-            self.assertIn("Please use existing arguments", output)
+             patch('sys.stderr', new=StringIO()) as fake_err:
+            with self.assertRaises(SystemExit) as cm:
+                cl.main()
+            self.assertEqual(cm.exception.code, 2)
+            output = fake_err.getvalue()
+            self.assertIn("unrecognized arguments: --color blue", output)
 
 if __name__ == '__main__':
     unittest.main()
