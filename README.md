@@ -44,3 +44,8 @@ User statement: python3 cl.py --shape circle
 4. If the requested year or shape has no data, a message suggesting trying other parameters will be shown\
    If the user enters an invalid URL, a custom 404 error page will be displayed with helpful instructions.\
    All results are displayed in an HTML table format.\
+
+# Database
+
+We plan to use the location and duration in front-end deliverble, as information users can optain through their search.
+Clarification for datatype: We wish not to focus on preprocessing the orginial format of opur dataset, therefore we have to load ufo_duration as text, even though they are mostly integers, at least one is mixed with punctuation. Especially because we keep duration for front-end purpose. 
