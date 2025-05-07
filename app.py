@@ -113,9 +113,9 @@ def page_not_found(error):
         tuple: A tuple containing the HTML string for the 404 page
                and the 404 status code.
     """
+    del error  #had to pass style check
     return '''
         <h1>404 - Page Not Found</h1>
-        <p>{error}</p>
         <p>Oops, invalid URL! Please try using proper formatting:</p>
         <ul> 
              <li><code>/sightings/year/&lt;year&gt;</code></li>
