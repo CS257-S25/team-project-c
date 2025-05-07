@@ -2,15 +2,34 @@
 
 import unittest
 from unittest.mock import patch
-import app
-from ProductionCode import processor
+from app import app
 
 mock_data_app = [
-    {'datetime': '10/10/1999 20:30', 'city': 'test city 1', 'state': 'XX', 'shape': 'triangle', 'duration': '5 mins', 'comments': 'test comment 1'},
-    {'datetime': '11/11/1999 21:00', 'city': 'test city 2', 'state': 'YY', 'shape': 'circle', 'duration': '10 mins', 'comments': 'test comment 2'},
-    {'datetime': '12/12/2000 22:00', 'city': 'test city 3', 'state': 'ZZ', 'shape': 'circle', 'duration': '1 hour', 'comments': 'test comment 3'}
+    {
+        'datetime': '10/10/1999 20:30',
+        'city': 'test city 1',
+        'state': 'XX',
+        'shape': 'triangle',
+        'duration': '5 mins',
+        'comments': 'test comment 1'
+    },
+    {
+        'datetime': '11/11/1999 21:00',
+        'city': 'test city 2',
+        'state': 'YY',
+        'shape': 'circle',
+        'duration': '10 mins',
+        'comments': 'test comment 2'
+    },
+    {
+        'datetime': '12/12/2000 22:00',
+        'city': 'test city 3',
+        'state': 'ZZ',
+        'shape': 'circle',
+        'duration': '1 hour',
+        'comments': 'test comment 3'
+    }
 ]
-
 class FlaskAppTests(unittest.TestCase):
     """Unit tests for the Flask app."""
     def setUp(self):
@@ -36,7 +55,8 @@ class FlaskAppTests(unittest.TestCase):
         self.assertIn(b'No sightings found for the year 1000', response.data)
         mock_get_year.assert_called_once_with(1000)
 
-    @patch('ProductionCode.processor.get_sightings_by_shape', return_value=[mock_data_app[1], mock_data_app[2]])
+    @patch('ProductionCode.processor.get_sightings_by_shape',
+           return_value=[mock_data_app[1], mock_data_app[2]])
     def test_sightings_by_valid_shape(self, mock_get_shape):
         """Test that a valid shape returns an HTML table."""
         response = self.client.get('/sightings/shape/circle')

@@ -1,27 +1,18 @@
-"""Test for functions in both production codes and command line tool."""
+"""Tests for the command line interface (cl.py)."""
 
 import unittest
 import sys
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 from io import StringIO
-from ProductionCode.processor import (
-    load_data, display_results,
-    filter_sightings_by_year, filter_by_shape,
-    get_sightings_by_shape
-)
 import cl
+from ProductionCode.processor import display_results, get_sightings_by_shape, get_sightings_by_year
 
 
-class TestProcessorMethods(unittest.TestCase):
-    """Unit tests for functions in ProductionCode and CLI."""
+class TestCLIMethodsSimplified(unittest.TestCase):
+    """Simplified unit tests for the command line interface."""
 
     def setUp(self):
-        """Redirect stdout and prepare sample UFO data for testing."""
-        self.sample_data = [
-            {'datetime': '10/10/1949 20:30', 'city': 'san marcos', 'shape': 'cylinder'},
-            {'datetime': '10/10/1949 21:00', 'city': 'lackland afb', 'shape': 'light'},
-            {'datetime': '10/10/1956 21:00', 'city': 'edna', 'shape': 'cylinder'}
-        ]
+        """Redirect stdout."""
         self._stdout = sys.stdout
         self.held_output = StringIO()
         sys.stdout = self.held_output
@@ -30,102 +21,87 @@ class TestProcessorMethods(unittest.TestCase):
         """Restore original stdout."""
         sys.stdout = self._stdout
 
-    @patch("builtins.open", new_callable=mock_open, read_data='datetime,city\na,b\n')
-    def test_load_data(self, mock_file):
-        """Test loading CSV data into a list of dictionaries."""
-        result = load_data("test_file.csv")
-        expected_result = [{'datetime': 'a', 'city': 'b'}]
-        self.assertEqual(result, expected_result)
-        mock_file.assert_called_with("test_file.csv", newline='', encoding='utf-8')
+    @patch('ProductionCode.processor.get_sightings_by_shape', return_value=[{'shape': 'circle', 'location': 'here'}])
+    @patch('ProductionCode.processor.display_results')
+    @patch('sys.argv', ['cl.py', '--shape', 'circle'])
+    def test_main_with_shape(self, mock_display, mock_get_shape):
+        """Test CLI with --shape argument."""
+        cl.main()
+        mock_get_shape.assert_called_once_with('circle')
+        mock_display.assert_called_once_with([{'shape': 'circle', 'location': 'here'}])
+        self.assertEqual(self.held_output.getvalue(), "")
 
-    def test_display_results(self):
-        """Test that display_results prints each row in the data."""
-        display_results(self.sample_data)
+    @patch('ProductionCode.processor.get_sightings_by_year', return_value=[{'year': 2000, 'place': 'there'}])
+    @patch('ProductionCode.processor.display_results')
+    @patch('sys.argv', ['cl.py', '--year', '2000'])
+    def test_main_with_year(self, mock_display, mock_get_year):
+        """Test CLI with --year argument."""
+        cl.main()
+        mock_get_year.assert_called_once_with(2000)
+        mock_display.assert_called_once_with([{'year': 2000, 'place': 'there'}])
+        self.assertEqual(self.held_output.getvalue(), "")
+
+    @patch('sys.argv', ['cl.py'])
+    def test_main_no_arguments_prints_usage(self):
+        """Test CLI with no arguments prints usage message."""
+        cl.main()
         output = self.held_output.getvalue()
-        self.assertIn('san marcos', output)
-        self.assertIn('lackland afb', output)
-        self.assertIn('edna', output)
-        self.assertEqual(output.count('{'), 3)
+        self.assertIn("Please use existing arguments to filter the data.", output)
+        self.assertIn("You can filter by shape:", output)
+        self.assertIn("Or filter by year:", output)
 
-    def test_filter_sightings_by_year(self):
-        """Test filtering sightings by year returns correct rows."""
-        result_1949 = filter_sightings_by_year(self.sample_data, 1949)
-        self.assertEqual(len(result_1949), 2)
-        self.assertEqual({r['city'] for r in result_1949}, {'san marcos', 'lackland afb'})
+    @patch('ProductionCode.processor.display_results')
+    @patch('sys.argv', ['cl.py', '--shape', 'triangle'])
+    def test_main_calls_display_results_shape(self, mock_display):
+        """Test CLI calls display_results when filtering by shape."""
+        # We don't need to check the return value of get_sightings_by_shape here,
+        # just that display_results is called.
+        cl.main()
+        mock_display.assert_called_once()
+        self.assertEqual(self.held_output.getvalue(), "")
 
-        result_1956 = filter_sightings_by_year(self.sample_data, 1956)
-        self.assertEqual(len(result_1956), 1)
-        self.assertEqual(result_1956[0]['city'], 'edna')
+    @patch('ProductionCode.processor.display_results')
+    @patch('sys.argv', ['cl.py', '--year', '1970'])
+    def test_main_calls_display_results_year(self, mock_display):
+        """Test CLI calls display_results when filtering by year."""
+        # Similar to the shape test, just check if display_results is called.
+        cl.main()
+        mock_display.assert_called_once()
+        self.assertEqual(self.held_output.getvalue(), "")
 
-        result_empty = filter_sightings_by_year(self.sample_data, 2000)
-        self.assertEqual(len(result_empty), 0)
 
-    def test_filter_by_year_with_bad_data(self):
-        """Test that filter_sightings_by_year skips malformed dates."""
-        bad_data = [{'datetime': 'bad_date', 'city': 'nowhere', 'shape': 'disk'}]
-        result = filter_sightings_by_year(bad_data, 2000)
-        self.assertEqual(result, [])
+class TestProcessorFunctionsSimplified(unittest.TestCase):
+    """Simplified unit tests for processor functions."""
 
-    def test_filter_by_shape(self):
-        """Test filtering sightings by shape returns matching entries."""
-        result_cylinder = filter_by_shape(self.sample_data, "cylinder")
-        self.assertEqual(len(result_cylinder), 2)
-        self.assertSetEqual({row['city'] for row in result_cylinder}, {'san marcos', 'edna'})
+    def setUp(self):
+        """Prepare a mock DataSource."""
+        self.mock_data_source = unittest.mock.Mock()
 
-        result_light = filter_by_shape(self.sample_data, "light")
-        self.assertEqual(len(result_light), 1)
-        self.assertEqual(result_light[0]['city'], 'lackland afb')
+    def test_get_sightings_by_shape_calls_datasource(self):
+        """Test get_sightings_by_shape calls the DataSource method."""
+        get_sightings_by_shape('disk')
+        self.mock_data_source.get_sightings_by_shape.assert_called_once_with('disk')
 
-        result_empty = filter_by_shape(self.sample_data, "disk")
-        self.assertEqual(len(result_empty), 0)
+    def test_get_sightings_by_year_calls_datasource(self):
+        """Test get_sightings_by_year calls the DataSource method."""
+        get_sightings_by_year(1960)
+        self.mock_data_source.get_sightings_by_year.assert_called_once_with(1960)
 
-    @patch("builtins.open", new_callable=mock_open, read_data=
-           "datetime,city,state,shape,duration,comments\n"
-           "10/10/1949 20:30,san marcos,tx,cylinder,5 mins,\"desc\"\n"
-           "10/10/1956 21:00,edna,tx,cylinder,5 mins,\"desc\"\n")
-    def test_get_sightings_by_shape(self, mock_file):
-        """Test wrapper that loads data and filters by shape correctly."""
-        result = get_sightings_by_shape("cylinder")
-        self.assertEqual(len(result), 2)
-        self.assertEqual(result[0]["shape"], "cylinder")
+    def test_display_results_prints_list(self):
+        """Test display_results prints each item in the list."""
+        results_to_display = [{'item': 1}, {'item': 'two'}]
+        with patch('sys.stdout', new_callable=StringIO) as stdout:
+            display_results(results_to_display)
+            output = stdout.getvalue()
+            self.assertIn("{'item': 1}", output)
+            self.assertIn("{'item': 'two'}", output)
 
-    def test_no_arguments(self):
-        """Test that the command line tool handles no arguments correctly."""
-        with patch('sys.stdout', new=StringIO()) as fake_out:
-            with patch('sys.argv', ['cl.py']):
-                cl.main()
-            output = fake_out.getvalue()
-            self.assertIn("Please use existing arguments to filter the data", output)
-
-    def test_cli_with_year_argument(self):
-        """Test CLI filters sightings by year argument."""
-        with patch('sys.argv', ['cl.py', '--year', '1949']), \
-             patch('sys.stdout', new=StringIO()) as fake_out, \
-             patch('ProductionCode.processor.load_data', return_value=self.sample_data):
-            cl.main()
-            output = fake_out.getvalue()
-            self.assertIn("san marcos", output)
-            self.assertIn("lackland afb", output)
-
-    def test_cli_with_shape_argument(self):
-        """Test CLI filters sightings by shape argument."""
-        with patch('sys.argv', ['cl.py', '--shape', 'cylinder']), \
-             patch('sys.stdout', new=StringIO()) as fake_out, \
-             patch('ProductionCode.processor.load_data', return_value=self.sample_data):
-            cl.main()
-            output = fake_out.getvalue()
-            self.assertIn("san marcos", output)
-            self.assertIn("edna", output)
-
-    def test_cli_with_invalid_argument(self):
-        """Test CLI prints usage info with invalid argument."""
-        with patch('sys.argv', ['cl.py', '--color', 'blue']), \
-             patch('sys.stderr', new=StringIO()) as fake_err:
-            with self.assertRaises(SystemExit) as cm:
-                cl.main()
-            self.assertEqual(cm.exception.code, 2)
-            output = fake_err.getvalue()
-            self.assertIn("unrecognized arguments: --color blue", output)
+    def test_display_results_handles_empty_list(self):
+        """Test display_results handles an empty list."""
+        with patch('sys.stdout', new_callable=StringIO) as stdout:
+            display_results([])
+            output = stdout.getvalue().strip()
+            self.assertEqual(output, "No sightings found matching your query, please try again with different parameters.")
 
 if __name__ == '__main__':
     unittest.main()

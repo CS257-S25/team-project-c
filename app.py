@@ -49,7 +49,7 @@ def sightings_by_year(year):
     results = processor.get_sightings_by_year(year)
     count = len(results)
     if not results:
-        return f"<p>No sightings found for the year {year}, please try another year in range 1941 to 2013.</p>"
+        return f"<p>No sightings found for the year {year}, please try other years.</p>"
     return render_results(f"Sightings from {year}", results, count)
 
 @app.route('/sightings/shape/<string:shape>')
@@ -115,6 +115,7 @@ def page_not_found(error):
     """
     return '''
         <h1>404 - Page Not Found</h1>
+        <p>{error}</p>
         <p>Oops, invalid URL! Please try using proper formatting:</p>
         <ul> 
              <li><code>/sightings/year/&lt;year&gt;</code></li>
