@@ -4,7 +4,7 @@ import unittest
 import sys
 from unittest.mock import patch, MagicMock
 from io import StringIO
-import cl 
+import cl
 from ProductionCode.processor import display_results, get_sightings_by_shape, get_sightings_by_year
 
 # Sample data to be returned by mocked DataSource methods
@@ -54,7 +54,7 @@ class TestCLIMainFunction(unittest.TestCase):
         mock_instance.get_sightings_by_year.assert_called_once_with(2000)
         output = self.held_output.getvalue()
         self.assertIn(str(mock_year_results[0]), output)
-        
+
     @patch('ProductionCode.processor.DataSource')
     def test_main_with_shape_no_results(self, mock_data_source_class):
         """Test cl.main() with --shape argument and no results."""
@@ -64,7 +64,7 @@ class TestCLIMainFunction(unittest.TestCase):
 
         with patch('sys.argv', ['cl.py', '--shape', 'nosuchshape']):
             cl.main()
-        
+
         mock_data_source_class.assert_called_once()
         mock_instance.get_sightings_by_shape.assert_called_once_with('nosuchshape')
         output = self.held_output.getvalue()
