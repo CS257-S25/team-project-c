@@ -47,5 +47,5 @@ User statement: python3 cl.py --shape circle
 
 # Database
 
-We plan to use the location and duration in front-end deliverble, as information users can optain through their search.
+We plan to use the location and duration in front-end deliverble, as information users can optain through their search. \
 Clarification for datatype: We wish not to focus on preprocessing the orginial format of opur dataset, therefore we have to load ufo_duration as text, even though they are mostly integers, at least one is mixed with punctuation. Especially because we keep duration for front-end purpose. 
