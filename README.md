@@ -45,6 +45,11 @@ User statement: python3 cl.py --shape circle
    If the user enters an invalid URL, a custom 404 error page will be displayed with helpful instructions.\
    All results are displayed in an HTML table format.\
 
+In order to accont for our userstory, we have a function that counts total number of results for each query:\
+Therefore, users have access to total number of sightings for each year/shape.\
+We plan to use it for further visualization in front-end.\
+
+
 # Database
 
 We plan to use the location and duration in front-end deliverble, as information users can optain through their search. \
