@@ -1,21 +1,35 @@
 '''The Flask app interface for the UFO sightings project.'''
 
-from flask import Flask
+from flask import Flask, render_template_string
 from ProductionCode import processor
 
 app = Flask(__name__)
 
 @app.route('/')
 def homepage():
-    """Display the homepage with usage instructions.
+    """Display the homepage with usage instructions, including the year(s) with the most sightings and the most common shape overall.
 
     Returns:
         str: HTML content for the homepage.
     """
-    return '''
+    max_sightings_data = processor.calculate_max_sightings()
+    if isinstance(max_sightings_data, str):
+        max_sightings_html = f"<p>{max_sightings_data}</p>"
+        most_common_html = ""
+    else:
+        max_years = max_sightings_data['years_with_max_sightings']
+        max_count = max_sightings_data['max_sighting_count']
+        most_common_overall = max_sightings_data['most_common_shapes_overall']
+
+        max_sightings_html = f"<p>The year(s) with the most sightings ({max_count} sightings) are: {', '.join(map(str, max_years))}.</p>"
+        most_common_html = f"<p>The most common UFO shapes across all years are: {', '.join([f'{shape} ({count})' for shape, count in most_common_overall])}.</p>"
+
+    return f'''
         <h1>Welcome to the UFO Sightings App</h1>
+        {max_sightings_html}
+        {most_common_html}
         <p>Use the following URL patterns to view sightings data:</p>
-        <ul> 
+        <ul>
              <li><code>/sightings/year/&lt;year&gt;</code></li>
           e.g. /sightings/year/1999
             Year must be between 1941 and 2013.
@@ -85,7 +99,7 @@ def render_results(title, results, count):
 
 def table_constructor(results):
     """Construct an HTML table string from a list of sighting results.
-    
+
     Args:
         results (list[dict]): A list of sighting data (dictionaries).
                               Should not be empty.
@@ -117,7 +131,7 @@ def page_not_found(error):
     return '''
         <h1>404 - Page Not Found</h1>
         <p>Oops, invalid URL! Please try using proper formatting:</p>
-        <ul> 
+        <ul>
              <li><code>/sightings/year/&lt;year&gt;</code></li>
           e.g. /sightings/year/1999
             Year must be between 1941 and 2013.
