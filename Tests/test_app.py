@@ -1,8 +1,16 @@
 """Test for Flask app."""
 
 import unittest
-from unittest.mock import patch
+import sys # Import sys
+import os # Import os
+
+# Add project root to the Python path
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, project_root)
+
+from unittest.mock import patch, Mock
 from app import app
+from ProductionCode import processor
 
 mock_data_app = [
     {
@@ -126,7 +134,7 @@ class FlaskAppTests(unittest.TestCase):
 
     @patch('ProductionCode.processor.get_top_years', return_value=None)
     @patch('ProductionCode.processor.get_top_shapes', return_value=None)
-    def test_topdata_route_db_error(self, mock_get_shapes, mock_get_years):
+    def test_topdata_route_db_error(self, _mock_get_shapes, _mock_get_years):
         """Test the /sightings/topdata route when DB calls return None."""
         response = self.client.get('/sightings/topdata')
         self.assertEqual(response.status_code, 200)

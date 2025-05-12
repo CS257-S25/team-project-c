@@ -5,7 +5,7 @@ import sys
 from unittest.mock import patch, Mock
 from io import StringIO
 import cl
-from ProductionCode.processor import display_results, get_sightings_by_shape, get_sightings_by_year
+from ProductionCode.processor import display_results, get_sightings_by_shape, get_sightings_by_year, get_top_years, get_top_shapes
 
 # Sample data
 mock_shape_results = [{'shape': 'circle', 'city': 'Testville', 'ufoshaped': 'circle'}]
@@ -110,6 +110,36 @@ class TestUFOProcessing(unittest.TestCase):
         display_results(mock_empty_results)
         output = self.held_output.getvalue()
         self.assertIn("No sightings found matching your query", output)
+
+    @patch('ProductionCode.processor.DataSource')
+    def test_get_top_years_calls_datasource(self, mock_data_source_class):
+        """Test standalone get_top_years instantiates DataSource and calls its method."""
+        mock_instance = Mock()
+        mock_top_years_result = [(1999, 10), (2005, 8)] # Sample return data
+        mock_instance.get_top_n_years.return_value = mock_top_years_result
+        mock_data_source_class.return_value = mock_instance
+
+        num_years = 2
+        result = get_top_years(num_years) # Call the standalone function
+
+        self.assertEqual(result, mock_top_years_result)
+        mock_data_source_class.assert_called_once()
+        mock_instance.get_top_n_years.assert_called_once_with(num_years)
+
+    @patch('ProductionCode.processor.DataSource')
+    def test_get_top_shapes_calls_datasource(self, mock_data_source_class):
+        """Test standalone get_top_shapes instantiates DataSource and calls its method."""
+        mock_instance = Mock()
+        mock_top_shapes_result = [('circle', 25), ('light', 20)] # Sample return data
+        mock_instance.get_top_n_shapes.return_value = mock_top_shapes_result
+        mock_data_source_class.return_value = mock_instance
+
+        num_shapes = 2
+        result = get_top_shapes(num_shapes) # Call the standalone function
+
+        self.assertEqual(result, mock_top_shapes_result)
+        mock_data_source_class.assert_called_once()
+        mock_instance.get_top_n_shapes.assert_called_once_with(num_shapes)
 
 if __name__ == '__main__':
     unittest.main()

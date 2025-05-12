@@ -87,7 +87,9 @@ def render_results(title, results, count):
         str: HTML string containing a title, result count, and a table of the results.
     """
     table = table_constructor(results)
-    return f"<h2>{title}</h2><h3>Total Results: {count}</h3>" + "<br><p><a href='/'>Back to Homepage</a></p>" + table 
+    return (f"<h2>{title}</h2><h3>Total Results: {count}</h3>" 
+            + table 
+            + "<br><p><a href='/'>Back to Homepage</a></p>")
 
 def table_constructor(results):
     """Construct an HTML table string from a list of sighting results.
@@ -147,6 +149,7 @@ def page_not_found(error):
         <br><p><a href='/'>Back to Homepage</a></p>
     ''', 404
 
+# --- Helper function to render top data lists ---
 def render_top_list(title, data_list):
     """Helper function to render a list of (item, count) tuples as an HTML list.
 
@@ -166,6 +169,7 @@ def render_top_list(title, data_list):
     list_items = "".join([f"<li>{item}: {count} sightings</li>" for item, count in data_list])
     return f"<h3>{title}</h3><ol>{list_items}</ol>"
 
+# --- New route for top data ---
 @app.route('/sightings/topdata')
 def top_data():
     """Displays the top 5 years and top 5 shapes by sighting count.
@@ -180,7 +184,7 @@ def top_data():
     html += render_top_list("Top 5 Years by Sightings", top_years)
     html += render_top_list("Top 5 Shapes by Sightings", top_shapes)
     html += "<br><p><a href='/'>Back to Homepage</a></p>"
-
+    
     return html
 
 if __name__ == '__main__':
