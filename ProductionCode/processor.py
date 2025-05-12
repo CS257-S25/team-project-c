@@ -14,6 +14,7 @@ class DataSource:
     def connect(self):
         '''Initiates connection to database using information in the psqlConfig.py file.
         Returns the connection object.'''
+        connection = None # Initialize connection to None
         try:
             connection = psycopg2.connect(
                 database=config.DATABASE,
