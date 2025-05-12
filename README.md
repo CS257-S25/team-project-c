@@ -44,11 +44,9 @@ User statement: python3 cl.py --shape circle
 4. If the requested year or shape has no data, a message suggesting trying other parameters will be shown\
    If the user enters an invalid URL, a custom 404 error page will be displayed with helpful instructions.\
    All results are displayed in an HTML table format.\
-
-In order to accont for our userstory, we have a function that counts total number of results for each query:\
-Therefore, users have access to total number of sightings for each year/shape.\
-We plan to use it for further visualization in front-end.\
-
+5. View most common shape or years of sightings:\
+   vist with http://127.0.0.1:5000/sightings/topdata \
+   top 5 years and shapes with most ufo sightings are shown.
 
 # Database
 
