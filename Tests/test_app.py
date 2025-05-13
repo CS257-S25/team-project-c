@@ -1,12 +1,7 @@
 """Test for Flask app."""
 from app import app
 import unittest
-import sys
-import os
 from unittest.mock import patch
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, project_root)
-
 
 mock_data_app = [
     {

@@ -1,13 +1,9 @@
 """Tests for the DataSource class in processor.py."""
+import unittest
+from unittest.mock import patch, Mock
+import psycopg2
 from ProductionCode.processor import DataSource
 from ProductionCode import psql_config as config
-import unittest
-import sys
-from unittest.mock import patch, Mock
-import os
-project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-sys.path.insert(0, project_root)
-import psycopg2
 
 @patch('ProductionCode.processor.psycopg2')
 class TestDataSourceMethods(unittest.TestCase):
@@ -58,6 +54,15 @@ class TestDataSourceMethods(unittest.TestCase):
         ]
         self.assertEqual(results, expected_results)
         mock_cursor.close.assert_called_once()
+    
+    def test_get_sightings_by_shape_error(self, mock_psycopg2):
+        """Test get_sightings_by_shape on query error."""
+        self._test_method_error(
+            mock_psycopg2,
+            'get_sightings_by_shape',
+            args=('any_shape',),
+            error_message_fragment="Error fetching sightings by shape: "
+        )
 
     def test_get_sightings_by_year(self, mock_psycopg2):
         """Test get_sightings_by_year success path."""
@@ -80,6 +85,15 @@ class TestDataSourceMethods(unittest.TestCase):
         ]
         self.assertEqual(results, expected_results)
         mock_cursor.close.assert_called_once()
+    
+    def test_get_sightings_by_year_error(self, mock_psycopg2):
+        """Test get_sightings_by_year on query error."""
+        self._test_method_error(
+            mock_psycopg2,
+            'get_sightings_by_year',
+            args=(1999,),
+            error_message_fragment="Error fetching sightings by year: "
+        )
 
     def test_get_top_n_years(self, mock_psycopg2):
         """Test get_top_n_years success path."""
@@ -150,33 +164,23 @@ class TestDataSourceMethods(unittest.TestCase):
 
         self.assertEqual(results, [('light', 100), ('circle', 90), ('triangle', 80)])
         mock_cursor.close.assert_called_once()
-    
-    def test_format_results_direct(self, mock_psycopg2):
-        """Test the _format_results helper method directly."""
-        mock_connection, mock_cursor = self._setup_mocks(mock_psycopg2)
-        mock_cursor.description = [('id',), ('city',), ('comments',)]
-        mock_cursor.fetchall.return_value = [
-            (1, 'city1', 'comment1'),
-            (2, 'city2', None)
-        ]
-        data_source = DataSource()
-        # pylint: disable=protected-access
-        results = data_source._format_results(mock_cursor)
-        expected_results = [
-            {'id': 1, 'city': 'city1', 'comments': 'comment1'},
-            {'id': 2, 'city': 'city2', 'comments': None}
-        ]
-        self.assertEqual(results, expected_results)
 
-    def test_format_results_empty_direct(self, mock_psycopg2):
-        """Test _format_results with empty fetchall result directly."""
-        mock_connection, mock_cursor = self._setup_mocks(mock_psycopg2)
-        mock_cursor.description = [('id',), ('city',)]
-        mock_cursor.fetchall.return_value = []
+    def _test_method_error(self, mock_psycopg2, method_name, args, error_message_fragment):
+        """Helper method to test error handling in DataSource methods.
+        """
+        mock_connection = Mock()
+        mock_cursor = Mock()
+        mock_connection.cursor.return_value = mock_cursor
+        mock_psycopg2.connect.return_value = mock_connection
+        mock_psycopg2.Error = psycopg2.Error
+        mock_cursor.execute.side_effect = mock_psycopg2.Error("Query failed")
+
         data_source = DataSource()
-        # pylint: disable=protected-access
-        results = data_source._format_results(mock_cursor)
-        self.assertEqual(results, [])
+        method = getattr(data_source, method_name)
+        result = method(*args)
+
+        self.assertIsNone(result)
+        mock_cursor.close.assert_called_once()
 
 if __name__ == '__main__':
     unittest.main()
