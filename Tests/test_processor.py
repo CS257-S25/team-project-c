@@ -1,16 +1,13 @@
 """Tests for the DataSource class in processor.py."""
-
+from ProductionCode.processor import DataSource
+from ProductionCode import psql_config as config
 import unittest
 import sys
 from unittest.mock import patch, Mock
-import psycopg2
-
 import os
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, project_root)
-
-from ProductionCode.processor import DataSource
-from ProductionCode import psql_config as config
+import psycopg2
 
 @patch('ProductionCode.processor.psycopg2')
 class TestDataSourceMethods(unittest.TestCase):
@@ -19,9 +16,7 @@ class TestDataSourceMethods(unittest.TestCase):
         """Test successful database connection."""
         mock_connection = Mock()
         mock_psycopg2.connect.return_value = mock_connection
-
         data_source = DataSource()
-
         mock_psycopg2.connect.assert_called_once_with(
             database=config.DATABASE,
             user=config.USER,
@@ -41,7 +36,7 @@ class TestDataSourceMethods(unittest.TestCase):
             mock_exit.assert_called_once_with(1)
             mock_print.assert_any_call("Connection error: ", mock_psycopg2.connect.side_effect)
 
-    def test_get_sightings_by_shape_success(self, mock_psycopg2):
+    def test_get_sightings_by_shape(self, mock_psycopg2):
         """Test get_sightings_by_shape success path."""
         mock_connection = Mock()
         mock_cursor = Mock()
@@ -64,7 +59,7 @@ class TestDataSourceMethods(unittest.TestCase):
         self.assertEqual(results, expected_results)
         mock_cursor.close.assert_called_once()
 
-    def test_get_sightings_by_year_success(self, mock_psycopg2):
+    def test_get_sightings_by_year(self, mock_psycopg2):
         """Test get_sightings_by_year success path."""
         mock_connection = Mock()
         mock_cursor = Mock()
@@ -86,7 +81,7 @@ class TestDataSourceMethods(unittest.TestCase):
         self.assertEqual(results, expected_results)
         mock_cursor.close.assert_called_once()
 
-    def test_get_top_n_years_success(self, mock_psycopg2):
+    def test_get_top_n_years(self, mock_psycopg2):
         """Test get_top_n_years success path."""
         mock_connection = Mock()
         mock_cursor = Mock()
@@ -121,7 +116,7 @@ class TestDataSourceMethods(unittest.TestCase):
         self.assertEqual(results, [(1999, 50), (2001, 45), (1995, 40)])
         mock_cursor.close.assert_called_once()
 
-    def test_get_top_n_shapes_success(self, mock_psycopg2):
+    def test_get_top_n_shapes(self, mock_psycopg2):
         """Test get_top_n_shapes success path."""
         mock_connection = Mock()
         mock_cursor = Mock()
@@ -132,7 +127,6 @@ class TestDataSourceMethods(unittest.TestCase):
         data_source = DataSource()
         n = 3
         results = data_source.get_top_n_shapes(n)
-
         expected_query_fragment_select = (
             "SELECT LOWER(ufo_shape) AS shape, COUNT(*) AS count"
         )
@@ -143,7 +137,6 @@ class TestDataSourceMethods(unittest.TestCase):
         expected_query_fragment_group = "GROUP BY shape"
         expected_query_fragment_order = "ORDER BY count DESC"
         expected_query_fragment_limit = "LIMIT %s"
-
         call_args, _ = mock_cursor.execute.call_args
         actual_query = ' '.join(call_args[0].split())
 
@@ -157,6 +150,33 @@ class TestDataSourceMethods(unittest.TestCase):
 
         self.assertEqual(results, [('light', 100), ('circle', 90), ('triangle', 80)])
         mock_cursor.close.assert_called_once()
+    
+    def test_format_results_direct(self, mock_psycopg2):
+        """Test the _format_results helper method directly."""
+        mock_connection, mock_cursor = self._setup_mocks(mock_psycopg2)
+        mock_cursor.description = [('id',), ('city',), ('comments',)]
+        mock_cursor.fetchall.return_value = [
+            (1, 'city1', 'comment1'),
+            (2, 'city2', None)
+        ]
+        data_source = DataSource()
+        # pylint: disable=protected-access
+        results = data_source._format_results(mock_cursor)
+        expected_results = [
+            {'id': 1, 'city': 'city1', 'comments': 'comment1'},
+            {'id': 2, 'city': 'city2', 'comments': None}
+        ]
+        self.assertEqual(results, expected_results)
+
+    def test_format_results_empty_direct(self, mock_psycopg2):
+        """Test _format_results with empty fetchall result directly."""
+        mock_connection, mock_cursor = self._setup_mocks(mock_psycopg2)
+        mock_cursor.description = [('id',), ('city',)]
+        mock_cursor.fetchall.return_value = []
+        data_source = DataSource()
+        # pylint: disable=protected-access
+        results = data_source._format_results(mock_cursor)
+        self.assertEqual(results, [])
 
 if __name__ == '__main__':
-    unittest.main() 
+    unittest.main()

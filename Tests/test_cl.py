@@ -1,5 +1,4 @@
 """Tests for the command line interface (cl.py) and processor.py standalone functions."""
-
 import unittest
 import sys
 from unittest.mock import patch, Mock
