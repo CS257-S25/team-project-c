@@ -1,16 +1,12 @@
 """Test for Flask app."""
 
 import unittest
-import sys # Import sys
-import os # Import os
-
-# Add project root to the Python path
+import sys
+import os
+from unittest.mock import patch
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, project_root)
-
-from unittest.mock import patch, Mock
 from app import app
-from ProductionCode import processor
 
 mock_data_app = [
     {
