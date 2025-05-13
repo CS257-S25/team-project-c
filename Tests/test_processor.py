@@ -19,7 +19,7 @@ mock_top_shapes = [('light', 100), ('circle', 90), ('triangle', 80)]
 
 class TestDatabaseConnection(unittest.TestCase):
     """Tests for database connection handling."""
-    
+
     @patch('ProductionCode.processor.psycopg2')
     def test_connect_success(self, mock_psycopg2):
         """Test successful database connection."""
@@ -54,7 +54,7 @@ class TestDataSourceMethods(unittest.TestCase):
         self.mock_connection = Mock()
         self.mock_cursor = Mock()
         self.mock_connection.cursor.return_value = self.mock_cursor
-        
+ 
         # Patch psycopg2 for all tests in this class
         self.psycopg2_patcher = patch('ProductionCode.processor.psycopg2')
         self.mock_psycopg2 = self.psycopg2_patcher.start()
@@ -83,7 +83,8 @@ class TestDataSourceMethods(unittest.TestCase):
     def test_get_sightings_by_year(self):
         """Test get_sightings_by_year success path."""
         self.mock_cursor.description = [('col1',), ('ufo_date',), ('col3',)]
-        self.mock_cursor.fetchall.return_value = [('x', '2000-10-10', 'y'), ('z', '2000-11-11', 'w')]
+        self.mock_cursor.fetchall.return_value = [
+            ('x', '2000-10-10', 'y'), ('z', '2000-11-11', 'w')]
 
         data_source = DataSource()
         results = data_source.get_sightings_by_year(2000)
