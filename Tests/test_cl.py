@@ -4,10 +4,6 @@ import sys
 from unittest.mock import patch, Mock
 from io import StringIO
 import cl
-from ProductionCode.processor import (
-    display_results, get_sightings_by_shape, get_sightings_by_year,
-    get_top_years, get_top_shapes
-)
 
 mock_shape_results = [{'shape': 'circle', 'city': 'Testville', 'ufoshaped': 'circle'}]
 mock_year_results = [{'year': 2000, 'city': 'Testburg', 'ufo_date': '2000-01-01'}]
@@ -76,70 +72,6 @@ class TestUFOProcessing(unittest.TestCase):
              patch('sys.stderr', new_callable=StringIO):
             with self.assertRaises(SystemExit):
                 cl.main()
-
-    @patch('ProductionCode.processor.DataSource')
-    def test_get_sightings_by_shape_calls_datasource(self, mock_data_source_class):
-        """Test standalone get_sightings_by_shape instantiates DataSource and calls its method."""
-        mock_instance = Mock()
-        mock_instance.get_sightings_by_shape.return_value = mock_shape_results
-        mock_data_source_class.return_value = mock_instance
-        result = get_sightings_by_shape('circle')
-        self.assertEqual(result, mock_shape_results)
-        mock_data_source_class.assert_called_once()
-        mock_instance.get_sightings_by_shape.assert_called_once_with('circle')
-
-    @patch('ProductionCode.processor.DataSource')
-    def test_get_sightings_by_year_calls_datasource(self, mock_data_source_class):
-        """Test standalone get_sightings_by_year instantiates DataSource and calls its method."""
-        mock_instance = Mock()
-        mock_instance.get_sightings_by_year.return_value = mock_year_results
-        mock_data_source_class.return_value = mock_instance
-        result = get_sightings_by_year(2000)
-        self.assertEqual(result, mock_year_results)
-        mock_data_source_class.assert_called_once()
-        mock_instance.get_sightings_by_year.assert_called_once_with(2000)
-
-    def test_display_results_with_data(self):
-        """Test display_results prints data correctly."""
-        display_results(mock_shape_results)
-        output = self.held_output.getvalue()
-        self.assertIn(str(mock_shape_results[0]), output)
-
-    def test_display_results_empty(self):
-        """Test display_results handles empty list."""
-        display_results(mock_empty_results)
-        output = self.held_output.getvalue()
-        self.assertIn("No sightings found matching your query", output)
-
-    @patch('ProductionCode.processor.DataSource')
-    def test_get_top_years_calls_datasource(self, mock_data_source_class):
-        """Test standalone get_top_years instantiates DataSource and calls its method."""
-        mock_instance = Mock()
-        mock_top_years_result = [(1999, 10), (2005, 8)] # Sample return data
-        mock_instance.get_top_n_years.return_value = mock_top_years_result
-        mock_data_source_class.return_value = mock_instance
-
-        num_years = 2
-        result = get_top_years(num_years) # Call the standalone function
-
-        self.assertEqual(result, mock_top_years_result)
-        mock_data_source_class.assert_called_once()
-        mock_instance.get_top_n_years.assert_called_once_with(num_years)
-
-    @patch('ProductionCode.processor.DataSource')
-    def test_get_top_shapes_calls_datasource(self, mock_data_source_class):
-        """Test standalone get_top_shapes instantiates DataSource and calls its method."""
-        mock_instance = Mock()
-        mock_top_shapes_result = [('circle', 25), ('light', 20)] # Sample return data
-        mock_instance.get_top_n_shapes.return_value = mock_top_shapes_result
-        mock_data_source_class.return_value = mock_instance
-
-        num_shapes = 2
-        result = get_top_shapes(num_shapes) # Call the standalone function
-
-        self.assertEqual(result, mock_top_shapes_result)
-        mock_data_source_class.assert_called_once()
-        mock_instance.get_top_n_shapes.assert_called_once_with(num_shapes)
 
 if __name__ == '__main__':
     unittest.main()
