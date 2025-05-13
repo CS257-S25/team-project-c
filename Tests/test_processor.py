@@ -165,7 +165,7 @@ class TestDataSourceMethods(unittest.TestCase):
         self.assertEqual(results, [('light', 100), ('circle', 90), ('triangle', 80)])
         mock_cursor.close.assert_called_once()
 
-    def _test_method_error(self, mock_psycopg2, method_name, args):
+    def _test_method_error(self, mock_psycopg2, method_name, args, error_message_fragment):
         """Helper method to test error handling in DataSource methods."""
         mock_connection = Mock()
         mock_cursor = Mock()
@@ -173,7 +173,7 @@ class TestDataSourceMethods(unittest.TestCase):
         mock_psycopg2.connect.return_value = mock_connection
         mock_psycopg2.Error = psycopg2.Error
         mock_cursor.execute.side_effect = mock_psycopg2.Error("Query failed")
-
+        del error_message_fragment # Handle style check(unused arguments)
         data_source = DataSource()
         method = getattr(data_source, method_name)
         result = method(*args)
