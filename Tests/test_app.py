@@ -1,8 +1,7 @@
 """Test for Flask app."""
-from app import app
 import unittest
 from unittest.mock import patch
-
+from app import app
 mock_data_app = [
     {
         'datetime': '10/10/1999 20:30',

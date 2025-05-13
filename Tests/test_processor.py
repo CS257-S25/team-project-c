@@ -54,7 +54,7 @@ class TestDataSourceMethods(unittest.TestCase):
         ]
         self.assertEqual(results, expected_results)
         mock_cursor.close.assert_called_once()
-    
+
     def test_get_sightings_by_shape_error(self, mock_psycopg2):
         """Test get_sightings_by_shape on query error."""
         self._test_method_error(
@@ -85,7 +85,7 @@ class TestDataSourceMethods(unittest.TestCase):
         ]
         self.assertEqual(results, expected_results)
         mock_cursor.close.assert_called_once()
-    
+
     def test_get_sightings_by_year_error(self, mock_psycopg2):
         """Test get_sightings_by_year on query error."""
         self._test_method_error(
@@ -165,9 +165,8 @@ class TestDataSourceMethods(unittest.TestCase):
         self.assertEqual(results, [('light', 100), ('circle', 90), ('triangle', 80)])
         mock_cursor.close.assert_called_once()
 
-    def _test_method_error(self, mock_psycopg2, method_name, args, error_message_fragment):
-        """Helper method to test error handling in DataSource methods.
-        """
+    def _test_method_error(self, mock_psycopg2, method_name, args):
+        """Helper method to test error handling in DataSource methods."""
         mock_connection = Mock()
         mock_cursor = Mock()
         mock_connection.cursor.return_value = mock_cursor
