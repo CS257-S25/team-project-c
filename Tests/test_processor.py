@@ -54,7 +54,7 @@ class TestDataSourceMethods(unittest.TestCase):
         self.mock_connection = Mock()
         self.mock_cursor = Mock()
         self.mock_connection.cursor.return_value = self.mock_cursor
- 
+
         # Patch psycopg2 for all tests in this class
         self.psycopg2_patcher = patch('ProductionCode.processor.psycopg2')
         self.mock_psycopg2 = self.psycopg2_patcher.start()
