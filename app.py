@@ -1,9 +1,7 @@
-'''
-The eventual location for the Flask app interface for the project.
-'''
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from ProductionCode import processor
+
 
 app = Flask(__name__)
 
@@ -37,10 +35,14 @@ def sightings_by_year(year):
 
 @app.route('sightings/shape:/<string:shape>')
 def sightings_by_shape(shape):
+  """Return UFO sightings for a given shape as JSON."""
   raw_results = processor.get_sightings_by_shape(shape)
   results = clean_results(raw_results)
   return jsonify(results)
 
+@app.route('/about')
+def about_ufo():
+    return render_template('about.html')
 
 if __name__ == '__main__':
     app.run()
