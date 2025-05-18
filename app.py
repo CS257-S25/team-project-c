@@ -1,42 +1,21 @@
 '''The Flask app interface for the UFO sightings project.'''
 
-from flask import Flask
+from flask import Flask, render_template, request
 from ProductionCode import processor
 
 app = Flask(__name__)
 
 @app.route('/')
 def homepage():
-    """Display the homepage with usage instructions.
+    return render_template("homepage.html")
 
-    Returns:
-        str: HTML content for the homepage.
-    """
-    return '''
-        <h1>Welcome to the UFO Sightings App</h1>
-        <p>Use the following URL patterns to view sightings data:</p>
-        <ul> 
-             <li><code>/sightings/year/&lt;year&gt;</code></li>
-          e.g. /sightings/year/1999
-            Year must be between 1941 and 2013.
-            <br><br>
-            <li><code>/sightings/shape/&lt;shape&gt;</code></li>
-            e.g. /sightings/shape/circle
-           Shape must be a valid UFO shape as listed below:
-            <ul>
-                    <li>circle</li>
-                    <li>disk</li>
-                    <li>light</li>
-                    <li>fireball</li>
-                    <li>triangle</li>
-                    <li>oval</li>
-                    <li>cylinder</li>
-                    <li>rectangle</li>
-                    </ul>
-            <br>
-            <li><code>/sightings/topdata</code> - View top 5 years and shapes by sightings</li>
-        </ul>
-    '''
+@app.route('/search')
+def search():
+    query = request.args.get('query', '').strip().lower()
+    if query.isdigit():
+        return sightings_by_year(int(query))
+    else:
+        return sightings_by_shape(query)
 
 @app.route('/sightings/year/<int:year>')
 def sightings_by_year(year):

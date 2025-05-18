@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UFO Sightings App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="instructions">
+        <h1>Welcome to the UFO Sightings App</h1>
+        <p>Use the following URL patterns to view sightings data:</p>
+        <ul>
+            <li>
+                <code>/sightings/year/&lt;year&gt;</code><br>
+                Example: <code>/sightings/year/1999</code><br>
+                Year must be between 1941 and 2013.
+            </li>
+            <li>
+                <code>/sightings/shape/&lt;shape&gt;</code><br>
+                Example: <code>/sightings/shape/circle</code><br>
+                Shape must be one of the following:
+                <ul>
+                    <li>circle</li>
+                    <li>disk</li>
+                    <li>light</li>
+                    <li>fireball</li>
+                    <li>triangle</li>
+                    <li>oval</li>
+                    <li>cylinder</li>
+                    <li>rectangle</li>
+                </ul>
+            </li>
+            <li>
+                <code>/sightings/topdata</code> - View the top 5 years and shapes by number of sightings.
+            </li>
+        </ul>
+    </div>
+
+    <div class="search-section">
+        <form action="/search" method="get" class="search-button-form">
+            <button type="submit" class="start-button">Start to Search</button>
+        </form>
+    </div>
+</body>
+</html>
