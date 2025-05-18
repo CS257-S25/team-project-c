@@ -1,0 +1,54 @@
+h1 {
+    padding-top: 1em;
+    padding-bottom: 1em;
+    background-color: silver;
+    color: black;
+    text-align: center;
+}
+nav ul {
+    border: 2px solid silver;
+    list-style-type: none;
+    overflow: hidden;
+}
+nav li {
+    float: left;
+}
+nav li a {
+    display: block;
+    color: silver;
+    text-decoration: none;
+    text-align: center;
+    padding: 14px 16px;
+}
+nav li a:hover {
+    color: white;
+    background-color: blue;
+}
+body {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+div.highlight {
+    background-color: azure;
+    width: 300px;
+    border: 2px solid silver;
+    float: right;
+    padding: 10px;
+    margin: 10px;
+}
+h1, h2 {
+    font-family: Verdana, Geneva, sans-serif; 
+ }
+ p {
+     font-family: Verdana, Geneva, sans-serif;
+     line-height: 1.4;
+ }
+ li {
+     font-family: Verdana, Geneva, sans-serif;
+     line-height: 1.4;
+ }
+ nav li {
+     float: left;
+     font-size: 1.1em;
+     font-weight: bold;
+ }
