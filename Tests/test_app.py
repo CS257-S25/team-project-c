@@ -59,8 +59,9 @@ class FlaskAppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Search UFO Sightings', response.data)
         self.assertIn(b'Search Instructions', response.data)
-        self.assertIn(b'<strong>Year requirements:</strong> ' \
-        'Must be between 1941 and 2013.', response.data)
+        self.assertIn(
+        b'<strong>Year requirements:</strong> Must be between 1941 and 2013.',
+                       response.data)
 
     @patch('ProductionCode.processor.get_sightings_by_year')
     def test_search_by_valid_year(self, mock_get_year):
