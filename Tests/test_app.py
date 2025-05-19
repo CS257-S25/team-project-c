@@ -1,6 +1,6 @@
 """Test for Flask app."""
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from app import app
 
 mock_data_app = [
@@ -44,7 +44,7 @@ class FlaskAppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Welcome to UFO Sightings App', response.data)
         self.assertIn(b'Start Search', response.data)
-        self.assertIn(b'Ranking', response.data)
+        self.assertIn(b'Top Data', response.data)
 
     def test_about_page(self):
         """Test about page loads with correct content."""
@@ -59,11 +59,12 @@ class FlaskAppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Search UFO Sightings', response.data)
         self.assertIn(b'Search Instructions', response.data)
-        self.assertIn(b'Year must be between 1941 and 2013', response.data)
+        self.assertIn(b'<strong>Year requirements:</strong> Must be between 1941 and 2013.', response.data)
 
-    @patch('ProductionCode.processor.get_sightings_by_year', return_value=mock_data_app[:2])
+    @patch('ProductionCode.processor.get_sightings_by_year')
     def test_search_by_valid_year(self, mock_get_year):
         """Test search by valid year returns results."""
+        mock_get_year.return_value = mock_data_app[:2]
         response = self.client.post('/search', data={
             'search_type': 'year',
             'search_term': '1999'
@@ -75,9 +76,10 @@ class FlaskAppTests(unittest.TestCase):
         self.assertIn(b'test city 2', response.data)
         mock_get_year.assert_called_once_with(1999)
 
-    @patch('ProductionCode.processor.get_sightings_by_shape', return_value=[mock_data_app[1], mock_data_app[2]])
+    @patch('ProductionCode.processor.get_sightings_by_shape')
     def test_search_by_valid_shape(self, mock_get_shape):
         """Test search by valid shape returns results."""
+        mock_get_shape.return_value = [mock_data_app[1], mock_data_app[2]]
         response = self.client.post('/search', data={
             'search_type': 'shape',
             'search_term': 'circle'
@@ -89,21 +91,27 @@ class FlaskAppTests(unittest.TestCase):
         self.assertIn(b'test city 3', response.data)
         mock_get_shape.assert_called_once_with('circle')
 
-    def test_search_by_invalid_year(self):
+    @patch('ProductionCode.processor.get_sightings_by_year')
+    def test_search_by_invalid_year(self, mock_get_year):
         """Test search by invalid year returns 404."""
+        mock_get_year.return_value = None
         response = self.client.post('/search', data={
             'search_type': 'year',
             'search_term': '1000'
         })
         self.assertEqual(response.status_code, 404)
+        mock_get_year.assert_called_once_with(1000)
 
-    def test_search_by_invalid_shape(self):
+    @patch('ProductionCode.processor.get_sightings_by_shape')
+    def test_search_by_invalid_shape(self, mock_get_shape):
         """Test search by invalid shape returns 404."""
+        mock_get_shape.return_value = None
         response = self.client.post('/search', data={
             'search_type': 'shape',
             'search_term': 'unknownshape'
         })
         self.assertEqual(response.status_code, 404)
+        mock_get_shape.assert_called_once_with('unknownshape')
 
     def test_search_by_invalid_year_format(self):
         """Test search by invalid year format returns 404."""
@@ -125,6 +133,19 @@ class FlaskAppTests(unittest.TestCase):
         self.assertIn(b'Top UFO Sightings Data', response.data)
         self.assertIn(b'Top Years', response.data)
         self.assertIn(b'Top Shapes', response.data)
+        mock_get_years.assert_called_once_with(10)
+        mock_get_shapes.assert_called_once_with(10)
+
+    @patch('ProductionCode.processor.get_top_years')
+    @patch('ProductionCode.processor.get_top_shapes')
+    def test_topdata_page_error(self, mock_get_shapes, mock_get_years):
+        """Test top data page handles database errors."""
+        mock_get_years.return_value = None
+        mock_get_shapes.return_value = None
+
+        response = self.client.get('/topdata')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Top UFO Sightings Data', response.data)
         mock_get_years.assert_called_once_with(10)
         mock_get_shapes.assert_called_once_with(10)
 
