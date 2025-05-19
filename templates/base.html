@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="UFO Sightings Database - Search and explore UFO sighting reports">
+    <title>{% block title %}UFO Sightings App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <ul class="nav-links">
+            <li><a href="{{ url_for('homepage') }}"
+                    aria-current="{% if request.endpoint == 'homepage' %}page{% endif %}">Home</a></li>
+            <li><a href="{{ url_for('about') }}"
+                    aria-current="{% if request.endpoint == 'about' %}page{% endif %}">About</a></li>
+            <li><a href="{{ url_for('search') }}"
+                    aria-current="{% if request.endpoint == 'search' %}page{% endif %}">Search</a></li>
+            <li><a href="{{ url_for('topdata') }}"
+                    aria-current="{% if request.endpoint == 'topdata' %}page{% endif %}">Top Data</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content" role="main">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+
+</html>

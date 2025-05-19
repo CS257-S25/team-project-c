@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Page Not Found{% endblock %}
+
+{% block content %}
+<div class="search-container">
+    <div class="search-form">
+        <h1>404 - Page Not Found</h1>
+        <p>Oops! The page you're looking for doesn't exist.</p>
+
+        <div class="button-container" style="margin-top: 2rem;">
+            <a href="{{ url_for('search') }}" class="btn btn-primary">Return to Search</a>
+        </div>
+
+        <div class="search-instructions">
+            <h3>Search Instructions:</h3>
+            <p>Year must be between 1941 and 2013.</p>
+            <p>Shape must be one of the following:</p>
+            <ul class="shape-list">
+                <li>cigar</li>
+                <li>circle</li>
+                <li>cylinder</li>
+                <li>diamond</li>
+                <li>disk</li>
+                <li>egg</li>
+                <li>fireball</li>
+                <li>formation</li>
+                <li>light</li>
+                <li>oval</li>
+                <li>rectangle</li>
+                <li>sphere</li>
+                <li>triangle</li>
+                <li>teardrop</li>
+            </ul>
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}
