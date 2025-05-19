@@ -36,7 +36,7 @@ def search():
                     abort(404)
             except ValueError:
                 abort(404)
-        
+
         if results:
             count = len(results)
 
