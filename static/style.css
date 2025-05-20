@@ -49,7 +49,7 @@ body {
 
 .hero-section {
     position: relative;
-    height: 400px;
+    height: 560px;
     background-image: url('background.jpg');
     background-size: cover;
     background-position: center;
@@ -79,8 +79,7 @@ body {
 }
 
 .content-section {
-    background-color: #9c7fb8;
-    /* Violet */
+    background-color: #dbcbea;
     padding: 2rem;
     text-align: center;
     flex-grow: 1;
@@ -108,7 +107,7 @@ body {
 }
 
 .btn-primary {
-    background-color: #732ea4;
+    background-color: #371152;
     color: white;
 }
 
@@ -188,10 +187,13 @@ body {
 .shape-list {
     list-style-type: none;
     padding-left: 0;
+    column-count: 2;
+    column-gap: 2rem;
 }
 
 .shape-list li {
     padding: 0.25rem 0;
+    break-inside: avoid;
 }
 
 /* Results Table */
