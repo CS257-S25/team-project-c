@@ -44,7 +44,7 @@ class FlaskAppTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Welcome to UFO Sightings App', response.data)
         self.assertIn(b'Start Search', response.data)
-        self.assertIn(b'Top Data', response.data)
+        self.assertIn(b'Top Years/Shapes', response.data)
 
     def test_about_page(self):
         """Test about page loads with correct content."""
