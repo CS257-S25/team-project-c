@@ -1,0 +1,19 @@
+<!-- HTML for Homepage -->
+{% extends "base.html" %}
+
+{% block title %}Home - UFO Sightings App{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <div class="hero-section">
+        <h1 class="hero-title">Welcome to UFO Sightings App</h1>
+        <div class="image-caption">Photo: iStockphoto</div>
+    </div>
+    <div class="content-section">
+        <div class="button-container">
+            <a href="{{ url_for('search') }}" class="btn btn-primary">Start Search</a>
+            <a href="{{ url_for('topdata') }}" class="btn btn-primary">Top Years/Shapes</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

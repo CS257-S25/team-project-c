@@ -1,0 +1,48 @@
+<!-- HTML for top data page -->
+{% extends "base.html" %}
+
+{% block title %}Top Years/Shapes - UFO Sightings App{% endblock %}
+
+{% block content %}
+<div class="topdata-container">
+    <div class="ranking-section">
+        <h1>Top UFO Sightings Data</h1>
+
+        <h2>Top Years</h2>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Year</th>
+                    <th>Number of Sightings</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for year, count in top_years %}
+                <tr>
+                    <td>{{ year }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2>Top Shapes</h2>
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Shape</th>
+                    <th>Number of Sightings</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for shape, count in top_shapes %}
+                <tr>
+                    <td>{{ shape }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
