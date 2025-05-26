@@ -5,28 +5,28 @@ from app import app
 
 mock_data_app = [
     {
-        'datetime': '10/10/1999 20:30',
-        'city': 'test city 1',
-        'state': 'XX',
-        'shape': 'triangle',
-        'duration': '5 mins',
-        'comments': 'test comment 1'
+        'ufo_date': '10/10/1999 20:30',
+        'ufo_city': 'test city 1',
+        'ufo_state': 'XX',
+        'ufo_shape': 'triangle',
+        'ufo_duration': '5 mins',
+        'ufo_comment': 'test comment 1'
     },
     {
-        'datetime': '11/11/1999 21:00',
-        'city': 'test city 2',
-        'state': 'YY',
-        'shape': 'circle',
-        'duration': '10 mins',
-        'comments': 'test comment 2'
+        'ufo_date': '11/11/1999 21:00',
+        'ufo_city': 'test city 2',
+        'ufo_state': 'YY',
+        'ufo_shape': 'circle',
+        'ufo_duration': '10 mins',
+        'ufo_comment': 'test comment 2'
     },
     {
-        'datetime': '12/12/2000 22:00',
-        'city': 'test city 3',
-        'state': 'ZZ',
-        'shape': 'circle',
-        'duration': '1 hour',
-        'comments': 'test comment 3'
+        'ufo_date': '12/12/2000 22:00',
+        'ufo_city': 'test city 3',
+        'ufo_state': 'ZZ',
+        'ufo_shape': 'circle',
+        'ufo_duration': '1 hour',
+        'ufo_comment': 'test comment 3'
     }
 ]
 
@@ -67,10 +67,7 @@ class FlaskAppTests(unittest.TestCase):
     def test_search_by_valid_year(self, mock_get_year):
         """Test search by valid year returns results."""
         mock_get_year.return_value = mock_data_app[:2]
-        response = self.client.post('/search', data={
-            'search_type': 'year',
-            'search_term': '1999'
-        })
+        response = self.client.get('/search?search_type=year&search_term=1999')
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Search Results', response.data)
         self.assertIn(b'Total Results: 2', response.data)
@@ -82,10 +79,7 @@ class FlaskAppTests(unittest.TestCase):
     def test_search_by_valid_shape(self, mock_get_shape):
         """Test search by valid shape returns results."""
         mock_get_shape.return_value = [mock_data_app[1], mock_data_app[2]]
-        response = self.client.post('/search', data={
-            'search_type': 'shape',
-            'search_term': 'circle'
-        })
+        response = self.client.get('/search?search_type=shape&search_term=circle')
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Search Results', response.data)
         self.assertIn(b'Total Results: 2', response.data)
@@ -97,10 +91,7 @@ class FlaskAppTests(unittest.TestCase):
     def test_search_by_invalid_year(self, mock_get_year):
         """Test search by invalid year returns 404."""
         mock_get_year.return_value = None
-        response = self.client.post('/search', data={
-            'search_type': 'year',
-            'search_term': '1000'
-        })
+        response = self.client.get('/search?search_type=year&search_term=1000')
         self.assertEqual(response.status_code, 404)
         mock_get_year.assert_called_once_with(1000)
 
@@ -108,19 +99,13 @@ class FlaskAppTests(unittest.TestCase):
     def test_search_by_invalid_shape(self, mock_get_shape):
         """Test search by invalid shape returns 404."""
         mock_get_shape.return_value = None
-        response = self.client.post('/search', data={
-            'search_type': 'shape',
-            'search_term': 'unknownshape'
-        })
+        response = self.client.get('/search?search_type=shape&search_term=unknownshape')
         self.assertEqual(response.status_code, 404)
         mock_get_shape.assert_called_once_with('unknownshape')
 
     def test_search_by_invalid_year_format(self):
         """Test search by invalid year format returns 404."""
-        response = self.client.post('/search', data={
-            'search_type': 'year',
-            'search_term': 'not-a-year'
-        })
+        response = self.client.get('/search?search_type=year&search_term=not-a-year')
         self.assertEqual(response.status_code, 404)
 
     @patch('ProductionCode.processor.get_top_years')
