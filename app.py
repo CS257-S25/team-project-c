@@ -15,15 +15,15 @@ def about():
     """Display the about page."""
     return render_template('about.html')
 
-@app.route('/search', methods=['GET', 'POST'])
+@app.route('/search', methods=['GET'])
 def search():
     """Handle search requests and display results."""
     results = None
     count = 0
+    search_type = request.args.get('search_type')
+    search_term = request.args.get('search_term')
 
-    if request.method == 'POST':
-        search_type = request.form.get('search_type')
-        search_term = request.form.get('search_term')
+    if search_type and search_term:
         if search_type == 'shape':
             results = processor.get_sightings_by_shape(search_term)
             if not results:

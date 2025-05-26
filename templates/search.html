@@ -8,7 +8,7 @@
     <div class="search-wrapper">
         <div class="search-form">
             <h1>Search UFO Sightings</h1>
-            <form method="POST" action="{{ url_for('search') }}" aria-label="UFO sightings search form">
+            <form method="GET" action="{{ url_for('search') }}" aria-label="UFO sightings search form">
                 <div class="form-group">
                     <label for="search_type">Search by:</label>
                     <select name="search_type" id="search_type" class="form-control" aria-label="Select search type">
@@ -55,17 +55,25 @@
             <table class="results-table">
                 <thead>
                     <tr>
-                        {% for key in results[0].keys() %}
-                        <th scope="col">{{ key }}</th>
-                        {% endfor %}
+                        <th scope="col">Date</th>
+                        <th scope="col">City</th>
+                        <th scope="col">State</th>
+                        <th scope="col">Country</th>
+                        <th scope="col">Sighting Shape</th>
+                        <th scope="col">Sighting Duration (sec)</th>
+                        <th scope="col">Comment from Reporter</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for row in results %}
                     <tr>
-                        {% for value in row.values() %}
-                        <td>{{ value }}</td>
-                        {% endfor %}
+                        <td>{{ row.ufo_date }}</td>
+                        <td>{{ row.ufo_city }}</td>
+                        <td>{{ row.ufo_state }}</td>
+                        <td>{{ row.ufo_country }}</td>
+                        <td>{{ row.ufo_shape }}</td>
+                        <td>{{ row.ufo_duration }}</td>
+                        <td>{{ row.ufo_comment }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

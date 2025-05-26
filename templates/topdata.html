@@ -19,7 +19,7 @@
             <tbody>
                 {% for year, count in top_years %}
                 <tr>
-                    <td>{{ year }}</td>
+                    <td><a href="{{ url_for('search', search_type='year', search_term=year) }}">{{ year }}</a></td>
                     <td>{{ count }}</td>
                 </tr>
                 {% endfor %}
@@ -37,7 +37,7 @@
             <tbody>
                 {% for shape, count in top_shapes %}
                 <tr>
-                    <td>{{ shape }}</td>
+                    <td><a href="{{ url_for('search', search_type='shape', search_term=shape) }}">{{ shape }}</a></td>
                     <td>{{ count }}</td>
                 </tr>
                 {% endfor %}

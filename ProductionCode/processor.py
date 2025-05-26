@@ -67,10 +67,8 @@ class DataSource:
 
     def get_top_n_years(self, n):
         """Fetches the top N years with the most UFO sightings.
-
         Args:
             n (int): The number of top years to retrieve.
-
         Returns:
             list[tuple]: A list of tuples, where each tuple is (year, count),
                          ordered by count descending. Returns None on error.
@@ -79,7 +77,6 @@ class DataSource:
         cursor = None
         try:
             cursor = self.connection.cursor()
-            # Assuming date column is named 'ufo_date'
             query = """
                 SELECT EXTRACT(YEAR FROM ufo_date)::INTEGER AS year, COUNT(*) AS count
                 FROM ufo
@@ -101,10 +98,8 @@ class DataSource:
 
     def get_top_n_shapes(self, n):
         """Fetches the top N shapes with the most UFO sightings.
-
         Args:
             n (int): The number of top shapes to retrieve.
-
         Returns:
             list[tuple]: A list of tuples, where each tuple is (shape, count),
                          ordered by count descending. Returns None on error.
@@ -122,7 +117,6 @@ class DataSource:
                 LIMIT %s
             """
             cursor.execute(query, (n,))
-            # Fetches list of tuples directly
             results = cursor.fetchall()
         except psycopg2.Error as e:
             print(f"Error fetching top {n} shapes: ", e)
@@ -155,14 +149,10 @@ def get_sightings_by_year(year):
     data_source = DataSource()
     return data_source.get_sightings_by_year(year)
 
-# --- New Standalone Functions for Top Data ---
-
 def get_top_years(num_years):
     """Gets the top N years with the most sightings.
-
     Args:
         num_years (int): Number of top years required.
-
     Returns:
         list[tuple]: List of (year, count) tuples or None on error.
     """
@@ -171,10 +161,8 @@ def get_top_years(num_years):
 
 def get_top_shapes(num_shapes):
     """Gets the top N shapes with the most sightings.
-
     Args:
         num_shapes (int): Number of top shapes required.
-
     Returns:
         list[tuple]: List of (shape, count) tuples or None on error.
     """
