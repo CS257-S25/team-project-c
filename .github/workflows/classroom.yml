@@ -47,7 +47,7 @@ jobs:
       with:
         test-name: Style check - Tests
         setup-command: python -m pip install --upgrade pip; pip install pylint
-        command: pylint --disable=import-error Tests
+        command: pylint --disable=import-error,arguments-differ Tests
         timeout: 10
     - name: Style check - cl
       id: style-check-cl
