@@ -61,4 +61,4 @@ def page_not_found(error):
     return render_template('404.html'), 404
 
 if __name__ == '__main__':
-    app.run(port=8000)
+    app.run(host='0.0.0.0',port=5151, debug=False)  # Run the app on port 5151 with debug mode enabled
