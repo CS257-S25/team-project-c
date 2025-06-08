@@ -11,15 +11,62 @@
             <form method="GET" action="{{ url_for('search') }}" aria-label="UFO sightings search form">
                 <div class="form-group">
                     <label for="search_type">Search by:</label>
-                    <select name="search_type" id="search_type" class="form-control" aria-label="Select search type">
-                        <option value="shape">Shape</option>
-                        <option value="year">Year</option>
+                    <select name="search_type" id="search_type" class="form-control" aria-label="Select search type"
+                        onchange="toggleSearchInput()">
+                        <option value="shape" {% if request.args.get('search_type')=='shape' %}selected{% endif %}>shape
+                        </option>
+                        <option value="year" {% if request.args.get('search_type')=='year' %}selected{% endif %}>year
+                        </option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="search_term">Search term:</label>
-                    <input type="text" name="search_term" id="search_term" class="form-control" required
-                        aria-label="Enter search term" aria-required="true">
+                    <div id="year_input"
+                        style="display: {% if request.args.get('search_type') == 'year' %}block{% else %}none{% endif %};">
+                        <input type="text" name="year_term" id="year_search_term" class="form-control" required
+                            aria-label="Enter year" aria-required="true" value="{{ request.args.get('year_term', '') }}"
+                            placeholder="Enter year (1941-2013)">
+                    </div>
+                    <div id="shape_input"
+                        style="display: {% if request.args.get('search_type') == 'shape' %}block{% else %}none{% endif %};">
+                        <select name="shape_term" id="shape_search_term" class="form-control" required
+                            aria-label="Select shape" aria-required="true">
+                            <option value="">Select a shape</option>
+                            <option value="changing" {% if request.args.get('shape_term')=='changing' %}selected{% endif
+                                %}>Changing</option>
+                            <option value="cigar" {% if request.args.get('shape_term')=='cigar' %}selected{% endif %}>
+                                Cigar</option>
+                            <option value="circle" {% if request.args.get('shape_term')=='circle' %}selected{% endif %}>
+                                Circle</option>
+                            <option value="cylinder" {% if request.args.get('shape_term')=='cylinder' %}selected{% endif
+                                %}>Cylinder</option>
+                            <option value="diamond" {% if request.args.get('shape_term')=='diamond' %}selected{% endif
+                                %}>Diamond</option>
+                            <option value="disk" {% if request.args.get('shape_term')=='disk' %}selected{% endif %}>Disk
+                            </option>
+                            <option value="egg" {% if request.args.get('shape_term')=='egg' %}selected{% endif %}>Egg
+                            </option>
+                            <option value="fireball" {% if request.args.get('shape_term')=='fireball' %}selected{% endif
+                                %}>Fireball</option>
+                            <option value="formation" {% if request.args.get('shape_term')=='formation' %}selected{%
+                                endif %}>Formation</option>
+                            <option value="light" {% if request.args.get('shape_term')=='light' %}selected{% endif %}>
+                                Light</option>
+                            <option value="oval" {% if request.args.get('shape_term')=='oval' %}selected{% endif %}>Oval
+                            </option>
+                            <option value="rectangle" {% if request.args.get('shape_term')=='rectangle' %}selected{%
+                                endif %}>Rectangle</option>
+                            <option value="sphere" {% if request.args.get('shape_term')=='sphere' %}selected{% endif %}>
+                                Sphere</option>
+                            <option value="triangle" {% if request.args.get('shape_term')=='triangle' %}selected{% endif
+                                %}>Triangle</option>
+                            <option value="teardrop" {% if request.args.get('shape_term')=='teardrop' %}selected{% endif
+                                %}>Teardrop</option>
+                            <option value="unknown" {% if request.args.get('shape_term')=='unknown' %}selected{% endif
+                                %}>Unknown</option>
+                            <option value="other" {% if request.args.get('shape_term')=='other' %}selected{% endif %}>
+                        </select>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
@@ -28,29 +75,21 @@
         <div class="search-instructions">
             <h2>Search Instructions</h2>
             <p><strong>Year requirements:</strong> Must be between 1941 and 2013.</p>
-            <p><strong>Valid shapes:</strong></p>
-            <ul class="shape-list">
-                <li>cigar</li>
-                <li>circle</li>
-                <li>cylinder</li>
-                <li>diamond</li>
-                <li>disk</li>
-                <li>egg</li>
-                <li>fireball</li>
-                <li>light</li>
-                <li>oval</li>
-                <li>rectangle</li>
-                <li>sphere</li>
-                <li>triangle</li>
-                <li>teardrop</li>
-            </ul>
+            <p><strong> Shapes: </strong>Please only search from valid shapes in the drop down.</p>
         </div>
     </div>
 
     {% if results %}
     <div class="results-section">
         <h2>Search Results</h2>
-        <p>Total Results: {{ count }}</p>
+        <div class="search-summary">
+            {% if request.args.get('search_type') == 'year' %}
+            <p>Showing UFO sightings from the year <strong>{{ request.args.get('year_term') }}</strong></p>
+            {% else %}
+            <p>Showing UFO sightings with shape <strong>{{ request.args.get('shape_term') }}</strong></p>
+            {% endif %}
+            <p>Total Results: {{ count }}</p>
+        </div>
         <div role="region" aria-label="Search results table">
             <table class="results-table">
                 <thead>
@@ -82,4 +121,27 @@
     </div>
     {% endif %}
 </div>
+
+<script>
+    function toggleSearchInput() {
+        const searchType = document.getElementById('search_type').value;
+        const yearInput = document.getElementById('year_input');
+        const shapeInput = document.getElementById('shape_input');
+
+        if (searchType === 'year') {
+            yearInput.style.display = 'block';
+            shapeInput.style.display = 'none';
+            document.getElementById('year_search_term').required = true;
+            document.getElementById('shape_search_term').required = false;
+        } else {
+            yearInput.style.display = 'none';
+            shapeInput.style.display = 'block';
+            document.getElementById('year_search_term').required = false;
+            document.getElementById('shape_search_term').required = true;
+        }
+    }
+
+    // Initialize the form state when the page loads
+    document.addEventListener('DOMContentLoaded', toggleSearchInput);
+</script>
 {% endblock %}

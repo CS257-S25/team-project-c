@@ -253,3 +253,21 @@ body {
 .skip-link:focus {
     top: 0;
 }
+
+.search-summary {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 5px;
+    border-left: 4px solid #522672;
+}
+
+.search-summary p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.search-summary strong {
+    color: #522672;
+    font-weight: 600;
+}

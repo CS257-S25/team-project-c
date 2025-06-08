@@ -21,32 +21,41 @@ def search():
     results = None
     count = 0
     search_type = request.args.get('search_type')
-    search_term = request.args.get('search_term')
+    year_term = request.args.get('year_term')
+    shape_term = request.args.get('shape_term')
+    
+    print(f"Search request - Type: {search_type}, Year: {year_term}, Shape: {shape_term}")  # Debug log
 
-    if search_type and search_term:
-        if search_type == 'shape':
-            results = processor.get_sightings_by_shape(search_term)
+    if search_type:
+        if search_type == 'shape' and shape_term:
+            print(f"Searching by shape: {shape_term}")  # Debug log
+            results = processor.fetch_sightings_by_shape(shape_term)
             if not results:
+                print(f"No results found for shape: {shape_term}")  # Debug log
                 abort(404)
-        elif search_type == 'year':
+        elif search_type == 'year' and year_term:
             try:
-                year = int(search_term)
-                results = processor.get_sightings_by_year(year)
+                year = int(year_term)
+                print(f"Searching by year: {year}")  # Debug log
+                results = processor.fetch_sightings_by_year(year)
                 if not results:
+                    print(f"No results found for year: {year}")  # Debug log
                     abort(404)
             except ValueError:
+                print(f"Invalid year format: {year_term}")  # Debug log
                 abort(404)
 
         if results:
             count = len(results)
+            print(f"Found {count} results")  # Debug log
 
     return render_template('search.html', results=results, count=count)
 
 @app.route('/topdata')
 def topdata():
     """Display top years and shapes data."""
-    top_years_data = processor.get_top_years(10)  # Get top 10 years
-    top_shapes_data = processor.get_top_shapes(10)  # Get top 10 shapes
+    top_years_data = processor.fetch_top_years(10)  # Get top 10 years
+    top_shapes_data = processor.fetch_top_shapes(10)  # Get top 10 shapes
 
     # Ensure top_years and top_shapes are iterables (e.g., empty lists if None)
     top_years = top_years_data if top_years_data is not None else []

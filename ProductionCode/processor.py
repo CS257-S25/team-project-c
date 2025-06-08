@@ -139,17 +139,17 @@ def display_results(results):
     for row in results:
         print(row)
 
-def get_sightings_by_shape(shape):
+def fetch_sightings_by_shape(shape):
     """Get sightings by given shape."""
     data_source = DataSource()
     return data_source.get_sightings_by_shape(shape)
 
-def get_sightings_by_year(year):
+def fetch_sightings_by_year(year):
     """Get sightings by given year."""
     data_source = DataSource()
     return data_source.get_sightings_by_year(year)
 
-def get_top_years(num_years):
+def fetch_top_years(num_years):
     """Gets the top N years with the most sightings.
     Args:
         num_years (int): Number of top years required.
@@ -159,7 +159,7 @@ def get_top_years(num_years):
     data_source = DataSource()
     return data_source.get_top_n_years(num_years)
 
-def get_top_shapes(num_shapes):
+def fetch_top_shapes(num_shapes):
     """Gets the top N shapes with the most sightings.
     Args:
         num_shapes (int): Number of top shapes required.

@@ -77,3 +77,31 @@ Our website is designed to support different user behavior patterns.
 - Available data range are clearly displayed
 - 404 error page includes helpful instructions and a return button
 - Clear visual hierarchy with important actions prominently displayed 
+
+# Design Improvements
+## Code design 
+1. Repeated function names
+Issue: 2 distinct set of functions have the same names get_sightings_by_shape and get_sightings_by_year, causing confusion and making it unclear which function is being called in different parts of the codebase.
+Location: ProductionCode/processor.py
+Improvement: Changed functions out side of datasources class to fetch_sightings_by_year and fetch_sightings_by_year to later fectch instead of get makes it clear that these are not the direct database methods, but higher-level functions that fetch data using a new DataSource instance.
+
+2. Inconsistent docstring format
+Issue: The codebase mixes different docstring formats (single quotes vs double quotes) and styles, making documentation inconsistent and harder to maintain.
+Location: ProductionCode/processor.py 
+Improvement: Standardize all docstrings to use same format with double quotes for consistency and better IDE support.
+
+3. Inconsistent Error Handling in Database Operations
+Issue: The DataSource class methods use print statements for error handling and return None on errors, which is inconsistent with Python's exception handling patterns and makes error tracking difficult.
+Location: ProductionCode/processor.py 
+Improvement: Replace print statements with proper logging and raise custom exceptions for better error handling and debugging.
+
+## Front end design 
+1. Successful Search Indicator
+Usability Issue: Users were confused about whether their searches were successful because the results tables looked very similar for all queries.
+Location: Search page
+Improvement: Add a section above the table indicating a successful search for a specific year or shape.
+
+2. Dropdown for Shapes
+Usability Issue: Users found the current list of valid shapes difficult to use and suggested a dropdown to prevent mistyping and invalid entries.
+Location: Search page
+Improvement: Change the text-input box for shape to a dropdown menu containing all valid shapes.

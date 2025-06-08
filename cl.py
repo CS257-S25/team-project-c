@@ -4,8 +4,8 @@ This will be the entry point for the project when run from the command line.
 '''
 import argparse
 from ProductionCode.processor import (
-    get_sightings_by_shape,
-    get_sightings_by_year,
+    fetch_sightings_by_shape,
+    fetch_sightings_by_year,
     display_results
 )
 
@@ -18,9 +18,9 @@ def main():
     args = parser.parse_args()
 
     if args.shape:
-        results = get_sightings_by_shape(args.shape)
+        results = fetch_sightings_by_shape(args.shape)
     elif args.year:
-        results = get_sightings_by_year(args.year)
+        results = fetch_sightings_by_year(args.year)
     else:
         print("Please use existing arguments to filter the data.\n"
               "You can filter by shape:\n  python3 cl.py --shape \"circle\"\n"
