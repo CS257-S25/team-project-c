@@ -23,8 +23,10 @@ def search():
     search_type = request.args.get('search_type')
     year_term = request.args.get('year_term')
     shape_term = request.args.get('shape_term')
-    
-    print(f"Search request - Type: {search_type}, Year: {year_term}, Shape: {shape_term}")  # Debug log
+
+    # Debug log
+    print(f"Search request - Type: {search_type}, Year: {year_term}, "
+          f"Shape: {shape_term}")
 
     if search_type:
         if search_type == 'shape' and shape_term:
@@ -70,4 +72,5 @@ def page_not_found(error):
     return render_template('404.html'), 404
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5151, debug=False)  # Run the app on port 5151 with debug mode enabled
+    # Run the app on port 5151 with debug mode enabled
+    app.run(host='0.0.0.0', port=5151, debug=False)
